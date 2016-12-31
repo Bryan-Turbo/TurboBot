@@ -61,7 +61,7 @@ namespace TurboBot.Bot {
             var servers = this.CurrentBot.FindServers(serverName);
             this.CurrentVoiceChannel = servers.FirstOrDefault().VoiceChannels.FirstOrDefault();
             this.Client = await this.CurrentBot.GetService<AudioService>().Join(this.CurrentVoiceChannel);
-            this.Player = new YoutubePlayer(this.CurrentChannel, this.CurrentVoiceChannel);
+            this.Player = new YoutubePlayer(this.CurrentChannel, this.CurrentVoiceChannel, this.CurrentBot);
         }
 
         public void Run() {

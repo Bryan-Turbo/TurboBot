@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Audio;
@@ -16,13 +17,15 @@ namespace TurboBot.Bot.Music {
         Channel Channel { get; set; }
         Channel VoiceChannel { get; set; }
         VideoInfo VideoInfo { get; set; }
+        DiscordClient BotClient { get; set; }
 
         public bool CanPlay { get; set; }
         bool IsPlaying { get; set; }
 
-        public YoutubePlayer(Channel channel, Channel voiceChannel) {
+        public YoutubePlayer(Channel channel, Channel voiceChannel, DiscordClient botClient) {
             this.CanPlay = true;
             this.VoiceChannel = voiceChannel;
+            this.BotClient = botClient;
             string userDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             MainDirectory = Path.Combine(userDirectory, @"Desktop\Test\");
             if (!File.Exists($"{MainDirectory}ffmpeg.exe")) {
@@ -66,9 +69,16 @@ namespace TurboBot.Bot.Music {
             byte[] buffer = new byte[blockSize];
 
             while (resampler.Read(buffer, 0, blockSize) > 0 && this.CanPlay) {
+                if (voiceClient.State == ConnectionState.Disconnected) {
+                    System.Console.WriteLine("SOMETHING WENT FUCKING WRONG, RECONNECTING");
+                    voiceClient = await this.BotClient.GetService<AudioService>().Join(this.VoiceChannel);
+                }
                 this.IsPlaying = true;
-                voiceClient.Send(buffer, 0, blockSize);
+                try {
+                    voiceClient.Send(buffer, 0, blockSize);
+                } catch { /**/}
             }
+            voiceClient.Clear();
             this.IsPlaying = false;
             this.CanPlay = true;
         }

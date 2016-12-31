@@ -22,7 +22,6 @@ namespace TurboBot.Bot.Console {
         }
 
         public void Run() {
-            new Task(() => CheckConnection((Bot) Bot)).Start();
             while (true) {
 
                 string input = System.Console.ReadLine();
@@ -53,16 +52,6 @@ namespace TurboBot.Bot.Console {
         public void Log(string text) {
             File.AppendAllText(this.LogFile, $"{DateTime.Now.ToLongTimeString()}\t-\t{text}");
             System.Console.WriteLine(text);
-        }
-
-        private void CheckConnection(Bot bot) {
-            while (true) {
-                Thread.Sleep(15);
-                
-                if (bot.Client != null) {
-                    bot.Client.CancelToken.ThrowIfCancellationRequested();
-                }
-            }
         }
     }
 }
