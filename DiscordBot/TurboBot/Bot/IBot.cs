@@ -13,6 +13,6 @@ namespace TurboBot.Bot {
         Channel CurrentVoiceChannel { get; set; }
         bool IsInChannel { get; set; }
         void Run();
-        void JoinChannel(string serverName);
+        Task<bool> JoinChannel(ulong serverId);
     }
 }
