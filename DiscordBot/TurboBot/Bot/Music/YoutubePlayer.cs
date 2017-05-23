@@ -107,9 +107,7 @@ namespace TurboBot.Bot.Music {
                 this.IsPlaying = true;
 
                 for (int i = 0; i < buffer.Length; i += 2) {
-                    short bufferoo = BitConverter.ToInt16(buffer, i);
-                    bufferoo = (short) (bufferoo * (Volume / 100f));
-                    byte[] tempbuffer = BitConverter.GetBytes(bufferoo);
+                    byte[] tempbuffer = VolumeHandling.ChangeVolumeByPercentage(buffer, i, Volume);
                     buffer[i] = tempbuffer[0];
                     buffer[i + 1] = tempbuffer[1];
                 }
